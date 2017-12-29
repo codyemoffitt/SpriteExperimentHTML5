@@ -3,6 +3,7 @@
 <head>
    <title></title>
    <script type='text/javascript'>
+   //Test github
    var canvas = null; //The canvas
    var ctx = null; //The context
    var frame = 0; //Starting frame
@@ -23,14 +24,14 @@
    var tile1 = null; //A tile used later on when drawing background
 
    var tempyDelta = 0; //Starting deltas for player movement
-   var tempxDelta = 0; 
-   
+   var tempxDelta = 0;
+
    //Request animation frame function fixed for multiple browser implementations
-   window.requestAnimFrame = (function(){ return window.requestAnimationFrame 
-   		|| window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame 
-   		|| window.oRequestAnimationFrame || window.msRequestAnimationFrame 
+   window.requestAnimFrame = (function(){ return window.requestAnimationFrame
+   		|| window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame
+   		|| window.oRequestAnimationFrame || window.msRequestAnimationFrame
    		|| function( callback ){ window.setTimeout(callback, 1000 / 60); }; })();
-   
+
    //Sprite object
    function sprite(x, y, width, height, imgSrc, context, array, collidable)
    {
@@ -57,28 +58,28 @@
 	     collidableObjects.push(this);
 	  }
    }
-   
+
    sprite.prototype.setLoaded = function() //Once the image of the sprite is loaded, set it to be so
    {
       this.loaded = true;
    }
-   
+
    sprite.prototype.AI = function() //No AI for base sprite
    {
-      
+
    }
-   
-   sprite.prototype.draw = function ()  
+
+   sprite.prototype.draw = function ()
    {
       if(this.loaded)
 	  {
 	     //Draw position text above sprite for debugging
 	     ctx.font = "12pt Calibri";
          ctx.fillText("X:" + this.x + " Y:" + this.y, this.x, this.y);
-		 
+
 		 //The the sprite at its current position into its given context
-         this.context.drawImage(this.img, this.frame*this.width, 
-         	this.animSequence*this.height, this.width, this.height, 
+         this.context.drawImage(this.img, this.frame*this.width,
+         	this.animSequence*this.height, this.width, this.height,
          	this.x, this.y, this.width, this.height);
 	     //The image, the portion of the image, the animation sequence, the width/height of the character, character position, character scale (1:1)
 	  }
@@ -91,57 +92,57 @@
 	     else if(this.direction == 'e')
 		    this.animSequence = 3;
 	     else if(this.direction == 'w')
-		    this.animSequence = 2;		
+		    this.animSequence = 2;
 	     else if(this.direction == 'n')
 		    this.animSequence = 4;
 	     this.frame++;
-		 
-		 
-	  }	
+
+
+	  }
       else
       {
 	     this.frame = 0; //The non-moving frame
-      }	  
+      }
       if(this.frame > 9) //Check bounds of frame, default here is 0 through 9
-         this.frame = 0;	  
+         this.frame = 0;
    }
-   
+
    function onLoad() //Function called when the webpage loads
    {
-    
+
 	  //Get canvas and context
 	  canv = document.getElementById('gameCanvas');
 	  ctx2 = canv.getContext('2d');
-	  
+
 	  //Get main drawing canvas and context
 	  canvas = document.createElement('canvas');
 	  ctx = canvas.getContext('2d');
-	  
+
 	  ////Get canvas and context for background
 	  bgCanvas = document.createElement('canvas');
 	  bgContext = bgCanvas.getContext('2d');
-	  
-      //Create the player object	  
-      makePlayer();	  
+
+      //Create the player object
+      makePlayer();
 	  //Create other sprites
 	  makeKnight();
 	  makeTileTree();
-	  
-      //Add event listeners for input   
-	  document.addEventListener("keydown",keyDownHandler, false);	
-      document.addEventListener("keyup",keyUpHandler, false);	
-        
-		
+
+      //Add event listeners for input
+	  document.addEventListener("keydown",keyDownHandler, false);
+      document.addEventListener("keyup",keyUpHandler, false);
+
+
 	  //Call resize function to size canvases
 	  resize();
-	  
+
 	  //Load background tiles, when loaded, will call the function to draw the background canvas
       tile1 = new Image();
 	  tile1.src = 'images/16grid2.png';
 	  tile1.onload = function(){this.loaded= true; drawBGCanvas()};
-	  
+
    }
-   
+
    function drawBGCanvas() //Draws the background
    {
       //alert("Drawing BGCAnvas");
@@ -149,13 +150,13 @@
       for( j = 0; j < 600; j+= 16)
 	  {
 	     for( i = 0; i < 800; i += 16)
-		 {		       
-			   bgContext.drawImage(tile1, ((Math.floor(Math.random()*8))*16), 0, 16, 16, i, j, 16, 16);		   
+		 {
+			   bgContext.drawImage(tile1, ((Math.floor(Math.random()*8))*16), 0, 16, 16, i, j, 16, 16);
 			  if(i%3 == 0 && (j%3 == 0) )
 			   {
 			    if((Math.floor(Math.random()*4) == 1))
 				{
-				 
+
 				  //Draw the stones you can bump into, add them to the list of collidable objects
 			      bgContext.drawImage(tile1, 0, 16, 16, 16, i, j, 16, 16);
 			      var obj = new Object();
@@ -164,66 +165,66 @@
 			      obj.x = i;
 			      obj.y = j;
 				  collidableObjects.push(obj);
-				} 
+				}
 			   }
-			  
-	     }	 
+
+	     }
 	   }
 		 for(i = 0; i < backgroundLayer.length; i++)
 		 {
 		    backgroundLayer[i].draw();
 		 }
-		
+
 		 bgDrawn = true;
-		 
+
 		 //Background done, start the animation cycle!
 		 update();
    }
-   
+
    function redraw() //Called to redraw image and animate
-   {     
+   {
        //Clear ctx, and start drawing onto ctx
 	   ctx.fillStyle = 'white';
 	   ctx.clearRect(0, 0, canvas.width, canvas.height);
 	   ctx.fillRect(0, 0, canvas.width, canvas.height);
 	   ctx.fillStyle = 'black';
-	   
-   	   //Draw background canvas onto main context  
-	   ctx.drawImage(bgCanvas, 0, 0); 
-	
-	   //Draw sprites	  
+
+   	   //Draw background canvas onto main context
+	   ctx.drawImage(bgCanvas, 0, 0);
+
+	   //Draw sprites
        for( i = 0; i < sprites.length; i++) //Loop through array of sprites and draw them
 	   {
 	      sprites[i].draw();
 		  sprites[i].AI(); //Do sprite AI
 	   }
-	    
+
 	   //Clear viewport
 	   ctx2.fillStyle = 'white'; //Clear viewport
-	   ctx2.clearRect(0, 0, canv.width, canv.height); 
+	   ctx2.clearRect(0, 0, canv.width, canv.height);
 	   ctx2.fillRect(0, 0, canv.width, canv.height);
-	   
+
 	   //Set viewport origin
 	   var tempOriginX = player.x - 100; //Set viewport 100 pixels left of player
 	   var tempOriginY = player.y - 100; //Set viewport 100 pixels above player
-	   
+
 	   //Check viewport bounds
 	   if(tempOriginX < 0)
 	      tempOriginX = 0;
 	   if(tempOriginY < 0)
 	      tempOriginY = 0;
        if(tempOriginX+300 > canv.width)
-          tempOriginX = canv.width-300;	   
+          tempOriginX = canv.width-300;
 	   if(tempOriginY+300 > canv.height)
-          tempOriginY = canv.height-300;	 	  	   		   
-		  
-	   //Draw a section of the picture onto the viewport and scale it to canvas width and height	  
+          tempOriginY = canv.height-300;
+
+	   //Draw a section of the picture onto the viewport and scale it to canvas width and height
        ctx2.drawImage(canvas, tempOriginX, tempOriginY, 300, 300, 0, 0, canv.width, canv.height);
-	     
+
    }
-   
+
    function resize() //Resizes windows
-   { 
+   {
 	  canvas.width = 800;
       canvas.height = 600;
 	  canv.width = canvas.width;
@@ -231,115 +232,115 @@
 	  bgCanvas.width = canvas.width;
 	  bgCanvas.height = canvas.height;
    }
-   
+
    function update() //Updates game, decides if its time to redraw
-   { 
-      
-      requestAnimFrame(update); //Request the animation frame, tell it to call update 
-	  var delta = Date.now() - lastUpdateTime; 
+   {
+
+      requestAnimFrame(update); //Request the animation frame, tell it to call update
+	  var delta = Date.now() - lastUpdateTime;
 	  if (acDelta > msPerFrame)  //Should we redraw?
-	  { 
-	     acDelta = 0; 
+	  {
+	     acDelta = 0;
 		 if(collisionDetection()){ //Stop player from moving if there is a collision
 		 player.xDelta = 0;
 		 player.yDelta = 0;
 		 }
 		 //Occlusion, stuff lower on screen is drawn last, so it appears over the other things. Sorts sprites by y value
 		 occlusion();
-		 redraw();  
-      } 
-	  else 
-	  { 
-	     acDelta += delta; 
-	  }   
+		 redraw();
+      }
+	  else
+	  {
+	     acDelta += delta;
+	  }
 	  lastUpdateTime = Date.now();
-	  
-	  
-	  
-      	  
+
+
+
+
    }
-   
+
    function makePlayer() //Makes the player
    {
       player = new sprite(162,65, 30, 30, 'images/linkmaster.png', ctx, sprites, true);
-	  
+
 	  player.draw = function()
 	  {
-	     
+
 	     if(this.loaded)
 	     {
-                this.context.drawImage(this.img, this.frame*this.width, this.animSequence*this.height, 
+                this.context.drawImage(this.img, this.frame*this.width, this.animSequence*this.height,
             	    this.width, this.height, this.x, this.y, this.width, this.height);
-            	    
+
 		//ctx.fillRect(this.x, this.y, 20, 20);
 		ctx.font = "12pt Calibri";
                 ctx.fillText("X:" + this.x + " Y:" + this.y, this.x, this.y);
-	     }	
+	     }
 	     if(this.moving)
 	     {
-		 
+
 	     if(this.direction == 's')
 		    this.animSequence = 1;
 	     else if(this.direction == 'e')
 		    this.animSequence = 3;
 	     else if(this.direction == 'w')
-		    this.animSequence = 2;		
+		    this.animSequence = 2;
 	     else if(this.direction == 'n')
 		    this.animSequence = 4;
 	     this.frame++;
-		 
-		 
-	     }	
+
+
+	     }
          else
          {
 	        this.frame = 0;
-         }	  
+         }
          if(this.frame > 9)
-            this.frame = 0;	 
-		
+            this.frame = 0;
+
 
 		    this.x += this.xDelta;
-            this.y += this.yDelta;	
+            this.y += this.yDelta;
 
 	  }
-	  
-	  
+
+
 	  player.speed = 2;
    }
-   
+
    function makeKnight() //Makes the knight
    {
        var knight = new sprite(128, 128, 32, 32, 'images/knightwalk9.png', ctx, sprites, true);
 	  knight.moving = true;
 	  knight.yDelta = 1;
-	  
+
 	  knight.draw = function()
 	  {
-	     
+
 	     if(this.loaded)
 	     {
                  this.context.drawImage(this.img, this.frame*this.width, this.animSequence*this.height, this.width, this.height, this.x, this.y, this.width, this.height);
 		 ctx.font = "12pt Calibri";
                  ctx.fillText("X:" + this.x + " Y:" + this.y, this.x, this.y);
-	     }	
-		 
+	     }
+
              if(this.moving)
 	     {
-		 
+
 	         this.y += this.yDelta;
-	         this.frame += 1; 
-		 
+	         this.frame += 1;
+
                  if(this.frame > 6)
 		 {
-		    this.frame = 0; 		 
-		 }	
+		    this.frame = 0;
+		 }
 	     }
 		 else
 		    frame = 0;
-		 
+
 		 //this.frame = this.frame;
 	  }
-	  
+
 	  knight.AI = function()
 	  {
 	     this.ticker++;
@@ -356,16 +357,16 @@
 		     this.yDelta = -1;
 	         }
 	         this.ticker = 0;
-	     }  
+	     }
 	  }
    }
-   
+
    function makeTileTree()
    {
       var tile = new sprite(100, 100, 24, 24, 'images/tile.png', ctx, sprites, true);
 	  var tree = new sprite(200, 200, 160, 220, 'images/tree.png', ctx, sprites, false);
    }
-   
+
    function makeEnemy() //Not used
    {
 	  var enemy = new sprite(64,161, 30, 30, 'images/linkmaster.png', ctx, sprites, true);
@@ -377,24 +378,24 @@
 		    this.ticker = 0;
 			this.direction = 'e';
 			this.xDelta = 1;
-		 }		
-		    
+		 }
+
 		  if(this.x < 0 || this.y < 0 || this.x > 300 || this.y > 300)
 		  {
 		     if(this.direction == 'e')
 		         this.direction = 'w';
 	             else
-                         this.direction = 'e';	
-                         
+                         this.direction = 'e';
+
 		     this.xDelta = -this.xDelta;
 		     this.yDelta = -this.yDelta;
-				 
-		  }	 
+
+		  }
 		  this.x += this.xDelta;
-		
+
 	  }
    }
-   
+
    function occlusion() //Sorts the sprites' draw order based on y values
    {
       sprites.sort(function(a, b){
@@ -404,81 +405,81 @@
       return 0;
       });
    }
-   
+
    function collisionDetection() //Function to detect if the player has bumped into anything
    {
       for(i = 0; i < collidableObjects.length; i++)
       {
-	        
+
 	        if(collidableObjects[i] !== player) //Make sure we don't test the player against itself
 			{
 			    //Is the player even near the object? This is probably a redundant and unnecessary check
-			    if((player.x - 100  < collidableObjects[i].x) && (player.x + 200 > collidableObjects[i].x) && (player.y - 100  < collidableObjects[i].y) && (player.y + 200 > collidableObjects[i].y)  ) 
+			    if((player.x - 100  < collidableObjects[i].x) && (player.x + 200 > collidableObjects[i].x) && (player.y - 100  < collidableObjects[i].y) && (player.y + 200 > collidableObjects[i].y)  )
 				{
 				    if(player.x + 20 + player.xDelta > collidableObjects[i].x && player.x + player.xDelta +10 < collidableObjects[i].x+collidableObjects[i].width
 					&& player.y + 25 + player.yDelta > collidableObjects[i].y && player.y + player.yDelta + 10 < collidableObjects[i].y+collidableObjects[i].height)
 					{
-					   return true;	   
+					   return true;
 					}
 				}
-            }			
-         		
-      }	
-	  
+            }
+
+      }
+
 	  return false;
 	  if(player.x < 0 || player.y < 0 || player.x > levelWidth || player.y > levelHeight)
 	  {
 	     player.x -= player.xDelta;
 	     player.y -= player.yDelta;
-		 	 
-	  }	 
-	  	  
+
+	  }
+
    }
-   
+
    function keyDownHandler(event) //Handling keyboard input
    {
 	   var keyPressed = String.fromCharCode(event.keyCode);
 	   tempDirection = player.direction;
 	    if (keyPressed == "W")
-	    {	
+	    {
 	       //facing = "N";
 		    tempyDelta = -player.speed;
 			tempDirection = 'n';
 			player.moving = true;
 	    }
 		else if (keyPressed == "D")
-		{	
+		{
 		   //facing = "E";
 		    tempxDelta = player.speed;
 			tempDirection = 'e';
-			player.moving = true;	
-			
+			player.moving = true;
+
 		}
 		else if (keyPressed == "S")
-		{	
+		{
 			//facing = "S";
 			tempyDelta = player.speed;
 			tempDirection = 's';
-			player.moving = true;		
+			player.moving = true;
 		}
 		else if (keyPressed == "A")
-		{	
+		{
 			//facing = "W";
 			tempxDelta = -player.speed;
-			tempDirection = 'w';	
-			player.moving = true;	
-			
+			tempDirection = 'w';
+			player.moving = true;
+
 		}
 
 		   player.xDelta = tempxDelta;
 		   player.yDelta = tempyDelta;
-		   player.direction = tempDirection;		
+		   player.direction = tempDirection;
 	}
-	
+
 	function keyUpHandler(event) //Stop movement of player is key is released
     {
 		var keyPressed = String.fromCharCode(event.keyCode);
-		
+
 		if ((keyPressed == "W") || (keyPressed == "A") ||(keyPressed == "S") || (keyPressed == "D"))
 		{
 			player.moving = false;
@@ -488,17 +489,17 @@
 			tempyDelta = 0;
 		}
     }
-	
-	
-   
 
 
-   
-   
+
+
+
+
+
    </script>
 </head>
 <body bgcolor="black" style ='position: absolute; padding:0; margin:0; height: 100%; width: 100%'>
 <body onload='onLoad()'>
 <canvas id="gameCanvas" width = 800 height = 600 style='width:800px;height:600px'></canvas>
 </body>
-</html>   
+</html>
